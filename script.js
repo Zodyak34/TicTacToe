@@ -7,6 +7,7 @@
  function to have computer select a cell and add an O in it
  */
 let gameActive;
+let gameDraw;
 const status = document.querySelector("#gameStatus");
 let currentPlayer = "X";
 let cellArray = ["", "", "", "", "", "", "", "", ""] // array of empty strings to be updated with X or O depending on currentPlayer
@@ -25,38 +26,62 @@ function cellClicked(cellId) {
     const clickedCell = cellId.target; // save the clicked cell
     const clickedCellId = parseInt(clickedCell.getAttribute("id")); // save cell id as a number
 
-    if (clickedCellId !== "" || !gameActive) { // check that the game is active and the cell has not been played before
+    if (cellArray[clickedCellId] !== "") { // check that the game is active and the cell has not been played before
         status.innerText = "Cell already clicked, choose another cell";
+    } else if (!gameActive) {
+        if (gameDraw) {
+            status.innerText = "Game Ended in a Draw";
+        }
+        status.innerText = `Game Over ${currentPlayer} Wins!`
+    } else if (currentPlayer === "X") {
+        playerTurn(clickedCell, clickedCellId)
+    } else {
+        status.innerText = "Not Your Turn";
     }
 
-    playerTurn(clickedCell, clickedCellId);
-    checkForWinner();
+
+    //checkForWinner();
 }
 
 function playerTurn(clickedCell, clickedCellId) {
-    cellArray[clickedCellId] = currentPlayer;
-    clickedCell.innerText = currentPlayer;
-    checkForWinner();
+    if (cellArray[clickedCellId] === "") {
+        cellArray[clickedCellId] = currentPlayer;
+        clickedCell.innerText = currentPlayer;
+        checkForWinner();
+    } else {
+        status.innerText = "Please choose another cell";
+    }
 }
 
 function switchTurn() {
     if (currentPlayer === "X") {
         currentPlayer = "O";
-        computerTurn();
+        status.innerText = `It is ${currentPlayer}'s turn`;
+        if (gameActive) {
+            computerTurn();
+        }
     }
     else {
         currentPlayer = "X";
+        status.innerText = `It is ${currentPlayer}'s turn`;
     }
 }
 
 function computerTurn() {
-    let computerCell;
-    do { // randomly selects a position in cellArray until on with an empty string is selected
-        computerCell = cellArray[Math.floor(Math.random() * cellArray.length)];
-    } while (cellArray[computerCell] === "");
+    let computerCellId;
+    let availableCells = [];
 
-    cellArray[computerCell] = currentPlayer; // insert value of currentPlayer ("O") into the cellArray at the randomly selected index
-    document.getElementById(computerCell).innerText = currentPlayer;
+    for (let i = 0; i < cellArray.length; i++) {
+        if (cellArray[i] === "") {
+            availableCells.push(i);
+        }
+    }
+
+    if (availableCells.length > 0) {
+        computerCellId = availableCells[Math.floor(Math.random() * availableCells.length)];
+        cellArray[computerCellId] = currentPlayer;
+        document.getElementById(computerCellId).innerHTML = currentPlayer;
+    }
 
     checkForWinner();
 }
@@ -77,12 +102,15 @@ function checkForWinner() {
         }
     }
     if (gameWon) {
-        status.innerText = `Game Won By ${currentPlayer}!`;
+        status.innerText = `Game Over ${currentPlayer} Wins!`;
         gameActive = false;
+        return;
     }
     if (!cellArray.includes("") && !gameWon) { // checks to see if there are any available plays and that the game has not been won, ends game in draw
         status.innerText = "Game Ended in a Draw";
         gameActive = false;
+        gameDraw = true;
+        return;
     }
     switchTurn();
 }
