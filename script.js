@@ -6,8 +6,8 @@
  function to start a new game
  function to have computer select a cell and add an O in it
  */
-let gameActive = false;
-const status = document.getElementById("#gameStatus");
+let gameActive;
+const status = document.querySelector("#gameStatus");
 let currentPlayer = "X";
 let cellArray = ["", "", "", "", "", "", "", "", ""] // array of empty strings to be updated with X or O depending on currentPlayer
 const winningConditions = [ // possible cell combinations to win the game
@@ -23,7 +23,7 @@ const winningConditions = [ // possible cell combinations to win the game
 
 function cellClicked(cellId) {
     const clickedCell = cellId.target; // save the clicked cell
-    const clickedCellId = clickedCell.parseInt(clickedCell.getAttribute("id")); // save cell id as a number
+    const clickedCellId = parseInt(clickedCell.getAttribute("id")); // save cell id as a number
 
     if (clickedCellId !== "" || !gameActive) { // check that the game is active and the cell has not been played before
         status.innerText = "Cell already clicked, choose another cell";
@@ -36,7 +36,7 @@ function cellClicked(cellId) {
 function playerTurn(clickedCell, clickedCellId) {
     cellArray[clickedCellId] = currentPlayer;
     clickedCell.innerText = currentPlayer;
-    switchTurn();
+    checkForWinner();
 }
 
 function switchTurn() {
@@ -56,7 +56,7 @@ function computerTurn() {
     } while (cellArray[computerCell] === "");
 
     cellArray[computerCell] = currentPlayer; // insert value of currentPlayer ("O") into the cellArray at the randomly selected index
-    document.getElementById("computerCell").innerText = currentPlayer;
+    document.getElementById(computerCell).innerText = currentPlayer;
 
     checkForWinner();
 }
@@ -88,8 +88,11 @@ function checkForWinner() {
 }
 
 function newGame() {
-    status.innerText = `It is ${currentPlayer}'s turn`;
     gameActive = true;
+    currentPlayer = "X";
+    cellArray = ["", "", "", "", "", "", "", "", ""];
+    status.innerText = `It is ${currentPlayer}'s turn`;
+    document.querySelectorAll(".cell").forEach(cell => { cell.innerHTML = ""});
 }
 
 document.querySelectorAll(".cell").forEach(cell => { //adds click handler to get the cell the player clicked
