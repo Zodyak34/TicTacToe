@@ -7,9 +7,12 @@ section {
     width: 750px;
     margin: 50px auto;
 }
-.cell {
+.cell{
     width: 250px;
     height: 250px;
     border: 1px solid black;
     box-sizing: border-box;
+}
+.cell:hover{
+    background-color: lightgray;
 }
