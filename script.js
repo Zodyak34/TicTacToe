@@ -50,7 +50,15 @@ function switchTurn() {
 }
 
 function computerTurn() {
+    let computerCell;
+    do { // randomly selects a position in cellArray until on with an empty string is selected
+        computerCell = cellArray[Math.floor(Math.random() * cellArray.length)];
+    } while (cellArray[computerCell] === "");
 
+    cellArray[computerCell] = currentPlayer; // insert value of currentPlayer ("O") into the cellArray at the randomly selected index
+    document.getElementById("computerCell").innerText = currentPlayer;
+
+    checkForWinner();
 }
 
 function checkForWinner() {
@@ -85,7 +93,7 @@ function newGame() {
 }
 
 document.querySelectorAll(".cell").forEach(cell => { //adds click handler to get the cell the player clicked
-    cell.addEventListener("click", playerTurn);
+    cell.addEventListener("click", cellClicked);
 });
 
 document.querySelector("#newGame").addEventListener("click", newGame); //adds an event handler to start a new game when new game button is clicked
