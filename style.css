@@ -12,6 +12,12 @@ section {
     height: 250px;
     border: 1px solid black;
     box-sizing: border-box;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    font-weight: bold;
+    font-size: 100px;
 }
 .cell:hover{
     background-color: lightgray;
