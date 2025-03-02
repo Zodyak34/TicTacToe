@@ -26,14 +26,14 @@ function cellClicked(cellId) {
     const clickedCell = cellId.target; // save the clicked cell
     const clickedCellId = parseInt(clickedCell.getAttribute("id")); // save cell id as a number
 
-    if (cellArray[clickedCellId] !== "") { // check that the game is active and the cell has not been played before
-        status.innerText = "Cell already clicked, choose another cell";
-    } else if (!gameActive) {
+     if (!gameActive) {// check that the game is active and the cell has not been played before
         if (gameDraw) {
             status.innerText = "Game Ended in a Draw";
         }
         status.innerText = `Game Over ${currentPlayer} Wins!`
-    } else if (currentPlayer === "X") {
+    } else if (cellArray[clickedCellId] !== "") {
+         status.innerText = "Cell already clicked, choose another cell";
+     }else if (currentPlayer === "X") {
         playerTurn(clickedCell, clickedCellId)
     } else {
         status.innerText = "Not Your Turn";
