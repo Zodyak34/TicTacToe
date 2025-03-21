@@ -1,15 +1,8 @@
-/*
- automatically start game when page is loaded
- function to get the cell that was clicked
- function to add an X for the player when they click a cell
- function to check for a winner
- function to start a new game
- function to have computer select a cell and add an O in it
- */
 let gameActive;
 let gameDraw;
 const status = document.querySelector("#gameStatus");
 let currentPlayer = "X";
+let computerMoveTimeout = 0;
 let cellArray = ["", "", "", "", "", "", "", "", ""] // array of empty strings to be updated with X or O depending on currentPlayer
 const winningConditions = [ // possible cell combinations to win the game
     [0, 1, 2],
@@ -26,14 +19,15 @@ function cellClicked(cellId) {
     const clickedCell = cellId.target; // save the clicked cell
     const clickedCellId = parseInt(clickedCell.getAttribute("id")); // save cell id as a number
 
-     if (!gameActive) {// check that the game is active and the cell has not been played before
+    if (!gameActive) {// check that the game is active and the cell has not been played before
         if (gameDraw) {
             status.innerText = "Game Ended in a Draw";
+            return;
         }
         status.innerText = `Game Over ${currentPlayer} Wins!`
     } else if (cellArray[clickedCellId] !== "") {
-         status.innerText = "Cell already clicked, choose another cell";
-     }else if (currentPlayer === "X") {
+        status.innerText = "Cell already clicked, choose another cell";
+    }else if (currentPlayer === "X") {
         playerTurn(clickedCell, clickedCellId)
     } else {
         status.innerText = "Not Your Turn";
@@ -58,7 +52,7 @@ function switchTurn() {
         currentPlayer = "O";
         status.innerText = `It is ${currentPlayer}'s turn`;
         if (gameActive) {
-            computerTurn();
+            computerMoveTimeout = setTimeout(computerTurn, 1000);
         }
     }
     else {
@@ -116,11 +110,12 @@ function checkForWinner() {
 }
 
 function newGame() {
+    clearTimeout(computerMoveTimeout);
     gameActive = true;
     currentPlayer = "X";
     cellArray = ["", "", "", "", "", "", "", "", ""];
     status.innerText = `It is ${currentPlayer}'s turn`;
-    document.querySelectorAll(".cell").forEach(cell => { cell.innerHTML = ""});
+    document.querySelectorAll(".cell").forEach(cell => {cell.innerHTML = ""});
 }
 
 document.querySelectorAll(".cell").forEach(cell => { //adds click handler to get the cell the player clicked
