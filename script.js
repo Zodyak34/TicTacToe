@@ -1,9 +1,16 @@
 let gameActive;
 let gameDraw;
-const status = document.querySelector("#gameStatus");
+let statusMessage = "";
 let currentPlayer = "X";
 let computerMoveTimeout = 0;
 let cellArray = ["", "", "", "", "", "", "", "", ""] // array of empty strings to be updated with X or O depending on currentPlayer
+const display = document.getElementById("display");
+const displayText1 = document.getElementById("start-message");
+const displayText2 = document.getElementById("message");
+const statusDisplay = document.getElementById("game-status-display");
+const currentTurnText = document.getElementById("current-turn");
+const gameStatusText = document.getElementById("game-status");
+
 const winningConditions = [ // possible cell combinations to win the game
     [0, 1, 2],
     [3, 4, 5],
@@ -21,16 +28,24 @@ function cellClicked(cellId) {
 
     if (!gameActive) {// check that the game is active and the cell has not been played before
         if (gameDraw) {
-            status.innerText = "Game Ended in a Draw";
+            currentTurnText.innerText = "Winner is:";
+            gameStatusText.innerText = `Player ${currentPlayer}`;
+
             return;
         }
-        status.innerText = `Game Over ${currentPlayer} Wins!`
+        currentTurnText.innerText = "Current Turn:";
+        gameStatusText.innerText = currentPlayer;
+
     } else if (cellArray[clickedCellId] !== "") {
-        status.innerText = "Cell already clicked, choose another cell";
+        currentTurnText.innerText = "";
+        gameStatusText.innerText = "Please Choose an Empty Cell";
+
     }else if (currentPlayer === "X") {
         playerTurn(clickedCell, clickedCellId)
     } else {
-        status.innerText = "Not Your Turn";
+        currentTurnText.innerText = "";
+        gameStatusText.innerText = "Not Your Turn";
+
     }
 
 
@@ -38,26 +53,26 @@ function cellClicked(cellId) {
 }
 
 function playerTurn(clickedCell, clickedCellId) {
-    if (cellArray[clickedCellId] === "") {
-        cellArray[clickedCellId] = currentPlayer;
-        clickedCell.innerText = currentPlayer;
-        checkForWinner();
-    } else {
-        status.innerText = "Please choose another cell";
-    }
+    cellArray[clickedCellId] = currentPlayer;
+    clickedCell.innerText = currentPlayer;
+    checkForWinner();
 }
 
 function switchTurn() {
     if (currentPlayer === "X") {
         currentPlayer = "O";
-        status.innerText = `It is ${currentPlayer}'s turn`;
+        currentTurnText.innerText = "Current Turn:";
+        gameStatusText.innerText = currentPlayer;
+
         if (gameActive) {
             computerMoveTimeout = setTimeout(computerTurn, 1000);
         }
     }
     else {
         currentPlayer = "X";
-        status.innerText = `It is ${currentPlayer}'s turn`;
+        currentTurnText.innerText = "Current Turn:";
+        gameStatusText.innerText = currentPlayer;
+
     }
 }
 
@@ -96,12 +111,18 @@ function checkForWinner() {
         }
     }
     if (gameWon) {
-        status.innerText = `Game Over ${currentPlayer} Wins!`;
+        statusDisplay.style.display = "none";
+        display.style.display = "flex";
+        displayText1.innerText = `Game Over! Player ${currentPlayer} Wins!`;
+        displayText2.innerText = "Play Again?";
         gameActive = false;
         return;
     }
     if (!cellArray.includes("") && !gameWon) { // checks to see if there are any available plays and that the game has not been won, ends game in draw
-        status.innerText = "Game Ended in a Draw";
+        statusDisplay.style.display = "none";
+        display.style.display = "flex";
+        displayText1.innerText = "Game Ended in a Draw";
+        displayText2.innerText = "Play Again?";
         gameActive = false;
         gameDraw = true;
         return;
@@ -110,11 +131,14 @@ function checkForWinner() {
 }
 
 function newGame() {
+    display.style.display = "none";
+    statusDisplay.style.display = "block";
     clearTimeout(computerMoveTimeout);
     gameActive = true;
     currentPlayer = "X";
     cellArray = ["", "", "", "", "", "", "", "", ""];
-    status.innerText = `It is ${currentPlayer}'s turn`;
+    currentTurnText.innerText = "Current Turn:";
+    gameStatusText.innerText = currentPlayer;
     document.querySelectorAll(".cell").forEach(cell => {cell.innerHTML = ""});
 }
 
