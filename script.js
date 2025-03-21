@@ -1,6 +1,5 @@
 let gameActive;
 let gameDraw;
-let statusMessage = "";
 let currentPlayer = "X";
 let computerMoveTimeout = 0;
 let cellArray = ["", "", "", "", "", "", "", "", ""] // array of empty strings to be updated with X or O depending on currentPlayer
@@ -76,8 +75,48 @@ function switchTurn() {
     }
 }
 
-function computerTurn() {
-    let computerCellId;
+//added some logic to the computers moves
+function computerLogic() {
+
+    for (let i = 0; i < winningConditions.length; i++) {
+        const winCon = winningConditions[i];
+        let a = cellArray[winCon[0]];
+        let b = cellArray[winCon[1]];
+        let c = cellArray[winCon[2]];
+
+        //check if the computer can win and return the winning cell
+        if (a === "O" && b === "O" && c === "") {
+            console.log("Computer can win by choosing cell:", winCon[2]);
+            return winCon[2];
+        } else if (a === "O" && c === "O" && b === "") {
+            console.log("Computer can win by choosing cell:", winCon[1]);
+            return winCon[1];
+        } else if (b === "O" && c === "O" && a === "") {
+            console.log("Computer can win by choosing cell:", winCon[0]);
+            return winCon[0];
+        }
+    }
+
+    //loop through a second time to ensure all conditions have been checked for a win before they are checked to be blocked
+    for (let i = 0; i < winningConditions.length; i++) {
+        const winCon = winningConditions[i];
+        let a = cellArray[winCon[0]];
+        let b = cellArray[winCon[1]];
+        let c = cellArray[winCon[2]];
+
+        if (a === b && c === "" && a === "X") {
+            console.log("Computer needs to block cell:", winCon[2]);
+            return winCon[2];
+        } else if (a === c && b === "" && a === "X") {
+            console.log("Computer needs to block cell:", winCon[1]);
+            return winCon[1];
+        } else if (b === c && a === "" && b === "X") {
+            console.log("Computer needs to block cell:", winCon[0]);
+            return winCon[0];
+        }
+    }
+
+    //return a random available cell if neither player can win this turn
     let availableCells = [];
 
     for (let i = 0; i < cellArray.length; i++) {
@@ -87,12 +126,19 @@ function computerTurn() {
     }
 
     if (availableCells.length > 0) {
-        computerCellId = availableCells[Math.floor(Math.random() * availableCells.length)];
-        cellArray[computerCellId] = currentPlayer;
-        document.getElementById(computerCellId).innerHTML = currentPlayer;
+        return availableCells[Math.floor(Math.random() * availableCells.length)];
     }
+}
 
-    checkForWinner();
+//update html and cellArray to show the computers move
+function computerTurn() {
+    let logicCell = computerLogic();
+
+    if (logicCell !== null) {
+        cellArray[logicCell] = currentPlayer;
+        document.getElementById(logicCell).innerHTML = currentPlayer;
+        checkForWinner();
+    }
 }
 
 function checkForWinner() {
