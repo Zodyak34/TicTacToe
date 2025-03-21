@@ -6,8 +6,8 @@
     <link rel="stylesheet" href="style.css">
     <script src="script.js" defer></script>
 </head>
-<body onload="newGame()">
-    <section>
+<body>
+    <section id = "game-board">
         <div class="container">
             <div class="cell" id="0"></div>
             <div class="cell" id="1"></div>
@@ -19,8 +19,15 @@
             <div class="cell" id="7"></div>
             <div class="cell" id="8"></div>
         </div>
-        <h2 id="gameStatus"></h2>
-        <button id="newGame">New Game</button>
+        <div id="game-status-display">
+            <p id="current-turn"></p>
+            <p id="game-status"></p>
+        </div>
+        <div id="display">
+            <h2 id="start-message">Welcome to Tic-Tac-Toe!</h2>
+            <p id="message">Click Below to Start a Game:</p>
+            <button id="newGame">New Game</button>
+        </div>
     </section>
 </body>
 </html>
